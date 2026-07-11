@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: cardealership
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cardealership
+    username: postgres
+    password: Bhargav
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+  sql:
+    init:
+      mode: never
+
+jwt:
+  # Base64 encoded 256-bit key for HMAC-SHA256: "this-is-a-secure-256-bit-secret-key-for-car-dealership-inventory-system"
+  secret: dGhpcy1pcy1hLXNlY3VyZS0yNTYtYml0LXNlY3JldC1rZXktZm9yLWNhci1kZWFsZXJzaGlwLWludmVudG9yeS1zeXN0ZW0=
+  expiration: 86400000 # 24 hours in milliseconds
+
+server:
+  port: 8081
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
