@@ -177,27 +177,21 @@ mvn clean test
 
 ## 🤖 My AI Usage
 
-### 1. Which AI Tools Were Used
-* **Antigravity (built on Google Gemini):** Used as the primary senior developer and code assistant during the pair-programming workflow.
+### AI Tools Used
+- ChatGPT
+- Gemini 3.1 Pro
+- Gemini 3.5 Flash
 
-### 2. Where It Helped
-* **Boilerplate and Structure:** Assisted in scaffold generation of entities, MapStruct mappers, and basic page routing files.
-* **Dynamic Search Specification:** Brainstormed the JPA Criteria API criteria query structures to construct type-safe dynamic predicates.
-* **Locking Strategy:** Advised on utilizing Pessimistic Write Lock (`LockModeType.PESSIMISTIC_WRITE`) to handle high-concurrency checkout states.
-* **Test MockMvc Builders:** Guided writing MockMvc controllers test scenarios and Mockito arguments capture stubs.
+### How I Used AI
+I used AI as a development assistant throughout this project rather than as a replacement for my own engineering judgment. It helped me brainstorm the overall architecture, generate initial Spring Boot and React boilerplate, and suggest DTO and entity structures for the backend. I also used it to clarify Spring Security and JWT concepts, draft unit test ideas, and troubleshoot compilation or runtime issues when I was stuck. In several cases, AI provided useful starting points for validation logic, API endpoint design, and README drafts. However, I reviewed every suggestion carefully, adapted it to the project’s needs, and tested and integrated the final implementation myself.
 
-### 3. Where Code Was Modified Manually
-* **Bootstrap Elements & Layouts:** Manually tailored the CSS styling rules, shadows, cards hover transforms, and layout container spacing to achieve a modern visual appearance.
-* **CORS Settings & Roles Integration:** Tailored custom HTTP request matcher roles mapping directly inside the Spring Security configurations chain.
-* **Error Envelope Decoupling:** Reconfigured Spring's standard exception errors payload structure to conform strictly to the custom API `ApiResponse` formatting.
+### My Reflection
+Using AI increased my development speed and reduced repetitive coding work, especially during the early scaffolding and debugging phases. It also helped me compare alternative implementations before choosing a direction, which made the solution design more thoughtful. That said, the final design decisions, integration work, testing, and validation were completed by me. Understanding the generated code was essential before I could safely merge it into the project, and that process strengthened my confidence in the final result. In short, AI was a helpful assistant that accelerated the workflow without replacing the responsibility of building and verifying the application myself.
 
-### 4. Git Co-author Commit Convention
-For all commits where AI-generated structures were adapted, co-authorship metadata was added to the commit message:
-```
-git commit -m "feat: implement user registration endpoint
+### AI Co-authorship
+For commits where AI significantly contributed to the implementation, I added Git co-author trailers in line with the assignment requirements. Examples included:
+- Co-authored-by: Gemini 3.1 Pro <gemini-pro@users.noreply.github.com>
+- Co-authored-by: Gemini 3.5 Flash <gemini-flash@users.noreply.github.com>
+- Co-authored-by: ChatGPT <chatgpt@users.noreply.github.com>
 
-Used an AI assistant to generate the initial boilerplate for the
-controller and service, then manually added validation logic.
-
-Co-authored-by: Gemini 3.1 Pro <Gemini3.1Pro@users.noreply.github.com>"
-```
+These trailers were added only when AI meaningfully assisted with code generation, debugging, or design support.
