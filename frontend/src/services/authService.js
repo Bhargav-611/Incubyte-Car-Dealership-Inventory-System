@@ -6,8 +6,13 @@ export const authService = {
     return response.data;
   },
 
-  register: async (name, email, password, role) => {
-    const response = await axiosInstance.post('/auth/register', { name, email, password, role });
+  register: async (name, email, password) => {
+    const response = await axiosInstance.post('/auth/register', { name, email, password });
+    return response.data;
+  },
+
+  registerAdmin: async (name, email, password) => {
+    const response = await axiosInstance.post('/auth/register-admin', { name, email, password });
     return response.data;
   }
 };

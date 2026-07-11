@@ -9,7 +9,6 @@ const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('ROLE_USER');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -18,7 +17,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password) {
       setError('Please fill in all fields');
       return;
     }
@@ -33,7 +32,7 @@ const Register = () => {
     setError('');
 
     try {
-      await authService.register(name, email, password, role);
+      await authService.register(name, email, password);
       setSuccessMessage('Registration successful! Redirecting to login page...');
       setTimeout(() => {
         navigate('/login');
@@ -110,19 +109,6 @@ const Register = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-              </div>
-
-              <div className="mb-4">
-                <label className="form-label small fw-semibold">Account Role</label>
-                <select
-                  className="form-select"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  required
-                >
-                  <option value="ROLE_USER">User (Browse & Purchase)</option>
-                  <option value="ROLE_ADMIN">Admin (Inventory Management)</option>
-                </select>
               </div>
 
               <button

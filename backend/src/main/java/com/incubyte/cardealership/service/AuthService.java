@@ -7,5 +7,6 @@ import com.incubyte.cardealership.dto.RegisterResponse;
 
 public interface AuthService {
     RegisterResponse register(RegisterRequest request);
+    RegisterResponse registerAdmin(RegisterRequest request);
     LoginResponse login(LoginRequest request);
 }

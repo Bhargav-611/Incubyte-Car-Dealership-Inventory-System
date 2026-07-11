@@ -15,5 +15,6 @@ public interface UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "password", ignore = true) // Password will be hashed manually in service layer
+    @Mapping(target = "role", ignore = true)
     User toEntity(RegisterRequest request);
 }

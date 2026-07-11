@@ -30,6 +30,12 @@ public class AuthController {
         return new ResponseEntity<>(ApiResponse.success("User registered successfully", response), HttpStatus.CREATED);
     }
 
+    @PostMapping("/register-admin")
+    public ResponseEntity<ApiResponse<RegisterResponse>> registerAdmin(@Valid @RequestBody RegisterRequest request) {
+        RegisterResponse response = authService.registerAdmin(request);
+        return new ResponseEntity<>(ApiResponse.success("Admin registered successfully", response), HttpStatus.CREATED);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = authService.login(request);

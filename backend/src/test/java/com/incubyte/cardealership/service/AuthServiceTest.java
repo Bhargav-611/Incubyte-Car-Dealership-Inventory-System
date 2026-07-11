@@ -60,7 +60,6 @@ class AuthServiceTest {
                 .name("John Doe")
                 .email("john@example.com")
                 .password("Password123!")
-                .role(UserRole.ROLE_USER)
                 .build();
 
         loginRequest = LoginRequest.builder()
@@ -90,9 +89,9 @@ class AuthServiceTest {
         when(userRepository.existsByEmail(registerRequest.getEmail())).thenReturn(false);
         when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn("hashed_password");
         when(userMapper.toEntity(registerRequest)).thenReturn(user);
-        when(userRepository.save(any(User.class))).thenReturn(user);
-        when(userMapper.toResponse(user)).thenReturn(userResponse);
-        when(jwtTokenProvider.generateToken(user.getEmail(), user.getRole().name())).thenReturn("jwt_token");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(userMapper.toResponse(any(User.class))).thenReturn(userResponse);
+        when(jwtTokenProvider.generateToken(anyString(), anyString())).thenReturn("jwt_token");
 
         // Act
         RegisterResponse response = authService.register(registerRequest);
@@ -101,6 +100,45 @@ class AuthServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getToken()).isEqualTo("jwt_token");
         assertThat(response.getUser().getEmail()).isEqualTo("john@example.com");
+        verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    void shouldRegisterAdminSuccessfully() {
+        // Arrange
+        User adminUser = User.builder()
+                .id(UUID.randomUUID())
+                .name("Admin User")
+                .email("admin@example.com")
+                .password("hashed_password")
+                .role(UserRole.ROLE_ADMIN)
+                .build();
+        UserResponse adminResponse = UserResponse.builder()
+                .id(adminUser.getId())
+                .name("Admin User")
+                .email("admin@example.com")
+                .role(UserRole.ROLE_ADMIN)
+                .build();
+        RegisterRequest adminRequest = RegisterRequest.builder()
+                .name("Admin User")
+                .email("admin@example.com")
+                .password("Password123!")
+                .build();
+
+        when(userRepository.existsByEmail(adminRequest.getEmail())).thenReturn(false);
+        when(passwordEncoder.encode(adminRequest.getPassword())).thenReturn("hashed_password");
+        when(userMapper.toEntity(adminRequest)).thenReturn(adminUser);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(userMapper.toResponse(any(User.class))).thenReturn(adminResponse);
+        when(jwtTokenProvider.generateToken(anyString(), anyString())).thenReturn("jwt_token");
+
+        // Act
+        RegisterResponse response = authService.registerAdmin(adminRequest);
+
+        // Assert
+        assertThat(response).isNotNull();
+        assertThat(response.getToken()).isEqualTo("jwt_token");
+        assertThat(response.getUser().getRole()).isEqualTo(UserRole.ROLE_ADMIN);
         verify(userRepository).save(any(User.class));
     }
 

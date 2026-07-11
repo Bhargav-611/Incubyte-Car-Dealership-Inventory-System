@@ -26,13 +26,26 @@ describe('authService API Methods', () => {
     const mockResponse = { data: { success: true, message: 'Registered' } };
     axiosInstance.post.mockResolvedValue(mockResponse);
 
-    const result = await authService.register('John', 'test@test.com', 'password', 'ROLE_USER');
+    const result = await authService.register('John', 'test@test.com', 'password');
 
     expect(axiosInstance.post).toHaveBeenCalledWith('/auth/register', {
       name: 'John',
       email: 'test@test.com',
       password: 'password',
-      role: 'ROLE_USER',
+    });
+    expect(result).toEqual(mockResponse.data);
+  });
+
+  it('calls POST /auth/register-admin with correct payload and returns data', async () => {
+    const mockResponse = { data: { success: true, message: 'Admin Registered' } };
+    axiosInstance.post.mockResolvedValue(mockResponse);
+
+    const result = await authService.registerAdmin('Admin', 'admin@test.com', 'password');
+
+    expect(axiosInstance.post).toHaveBeenCalledWith('/auth/register-admin', {
+      name: 'Admin',
+      email: 'admin@test.com',
+      password: 'password',
     });
     expect(result).toEqual(mockResponse.data);
   });

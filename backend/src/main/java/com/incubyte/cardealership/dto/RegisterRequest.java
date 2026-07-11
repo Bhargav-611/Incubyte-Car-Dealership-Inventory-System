@@ -1,6 +1,5 @@
 package com.incubyte.cardealership.dto;
 
-import com.incubyte.cardealership.entity.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +33,4 @@ public class RegisterRequest {
     )
     private String password;
 
-    @NotNull(message = "Role is required")
-    private UserRole role;
 }

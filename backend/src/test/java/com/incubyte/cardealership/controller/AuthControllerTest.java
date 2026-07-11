@@ -52,7 +52,6 @@ class AuthControllerTest {
                 .name("John Doe")
                 .email("john.doe@example.com")
                 .password("Password123!")
-                .role(UserRole.ROLE_USER)
                 .build();
 
         validLoginRequest = LoginRequest.builder()
@@ -95,13 +94,39 @@ class AuthControllerTest {
     }
 
     @Test
+    void shouldRegisterAdminSuccessfullyAndReturn201() throws Exception {
+        // Arrange
+        UserResponse adminResponse = UserResponse.builder()
+                .id(UUID.randomUUID())
+                .name("Admin User")
+                .email("admin@example.com")
+                .role(UserRole.ROLE_ADMIN)
+                .build();
+        RegisterResponse adminRegResponse = RegisterResponse.builder()
+                .user(adminResponse)
+                .token("jwt_admin_register_token")
+                .build();
+
+        when(authService.registerAdmin(any(RegisterRequest.class))).thenReturn(adminRegResponse);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/auth/register-admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validRegisterRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("Admin registered successfully"))
+                .andExpect(jsonPath("$.data.token").value("jwt_admin_register_token"))
+                .andExpect(jsonPath("$.data.user.role").value("ROLE_ADMIN"));
+    }
+
+    @Test
     void shouldReturn400BadRequestWhenRegistrationInputIsInvalid() throws Exception {
         // Arrange
         RegisterRequest invalidRequest = RegisterRequest.builder()
                 .name("") // Blank
                 .email("invalid-email") // Bad format
                 .password("short") // Short password
-                .role(null) // No role
                 .build();
 
         // Act & Assert

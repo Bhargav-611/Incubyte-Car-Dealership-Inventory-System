@@ -2,6 +2,7 @@ package com.incubyte.cardealership.service;
 
 import com.incubyte.cardealership.dto.*;
 import com.incubyte.cardealership.entity.User;
+import com.incubyte.cardealership.entity.UserRole;
 import com.incubyte.cardealership.exception.DuplicateEmailException;
 import com.incubyte.cardealership.exception.InvalidCredentialsException;
 import com.incubyte.cardealership.exception.UserNotFoundException;
@@ -45,6 +46,28 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(UserRole.ROLE_USER); // Default signup is ROLE_USER
+
+        User savedUser = userRepository.save(user);
+        UserResponse userResponse = userMapper.toResponse(savedUser);
+        String token = jwtTokenProvider.generateToken(savedUser.getEmail(), savedUser.getRole().name());
+
+        return RegisterResponse.builder()
+                .user(userResponse)
+                .token(token)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public RegisterResponse registerAdmin(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new DuplicateEmailException("Email is already registered");
+        }
+
+        User user = userMapper.toEntity(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(UserRole.ROLE_ADMIN); // Admin signup is ROLE_ADMIN
 
         User savedUser = userRepository.save(user);
         UserResponse userResponse = userMapper.toResponse(savedUser);
