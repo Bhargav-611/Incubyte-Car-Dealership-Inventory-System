@@ -239,7 +239,7 @@ const Landing = () => {
               <h5>Product</h5>
               <a href="#features">Features</a>
               <a href="#pricing">Pricing</a>
-              <a href="#">Security</a>
+              <Link to="/admin/login">Admin Console</Link>
             </div>
             <div className="footer-section">
               <h5>Company</h5>

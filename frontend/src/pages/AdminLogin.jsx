@@ -4,15 +4,15 @@ import { useAuth } from '../hooks/useAuth';
 import { authService } from '../services/authService';
 import ToastNotification from '../components/ToastNotification';
 import ErrorMessage from '../components/ErrorMessage';
-import { LogIn } from 'lucide-react';
+import { Shield } from 'lucide-react';
 
-const Login = () => {
+const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [toastMessage, setToastMessage] = useState('');
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -29,10 +29,18 @@ const Login = () => {
     try {
       const data = await authService.login(email, password);
       const { token, user } = data.data;
+
+      // Verify the user has administrative privileges
+      if (user.role !== 'ROLE_ADMIN') {
+        setError('Access denied. This login console is restricted to administrators.');
+        setLoading(false);
+        return;
+      }
+
       login(token, user);
-      setToastMessage('Login successful!');
+      setToastMessage('Authentication successful!');
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/admin');
       }, 1000);
     } catch (err) {
       if (err.response?.data?.message) {
@@ -51,31 +59,35 @@ const Login = () => {
         <ToastNotification message={toastMessage} type="success" onClose={() => setToastMessage('')} />
       )}
       <div className="auth-shell">
-        <div className="auth-hero">
-          <span className="brand-pill">Immersive inventory experience</span>
-          <h1>Step into a showroom built for modern buyers.</h1>
-          <p>Discover premium vehicles, track availability instantly, and manage the flow of your dealership with a polished digital experience.</p>
+        <div className="auth-hero admin-hero">
+          <span className="brand-pill admin-pill bg-danger-subtle text-danger border border-danger-subtle">
+            Secure Access Control
+          </span>
+          <h1 className="text-white mt-3">Administrator Management Console</h1>
+          <p className="text-muted">
+            Oversee general dealership system operations. Configure fleet inventory lists, restock quantities, adjust specifications, and manage transaction statuses.
+          </p>
         </div>
 
-        <div className="card auth-card">
-          <div className="card-body">
+        <div className="card auth-card border border-secondary border-opacity-25 shadow-lg bg-dark text-white">
+          <div className="card-body p-4">
             <div className="text-center mb-4">
-              <div className="brand-mark mb-3" style={{ margin: '0 auto' }}>
-                <LogIn size={24} />
+              <div className="brand-mark mb-3 bg-danger bg-opacity-25 border border-danger text-danger" style={{ margin: '0 auto' }}>
+                <Shield size={24} />
               </div>
-              <h3 className="fw-bold">Welcome Back</h3>
-              <p className="text-muted small mb-0">Log in to manage your inventory dashboard</p>
+              <h3 className="fw-bold">Admin Console Login</h3>
+              <p className="text-muted small mb-0">Authorized personnel access only</p>
             </div>
 
             <ErrorMessage message={error} />
 
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label className="form-label small fw-semibold">Email Address</label>
+                <label className="form-label small fw-semibold text-muted">Admin Email</label>
                 <input
                   type="email"
-                  className="form-control form-control-lg"
-                  placeholder="name@example.com"
+                  className="form-control form-control-lg bg-dark text-white border border-secondary"
+                  placeholder="admin@dealership.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -83,10 +95,10 @@ const Login = () => {
               </div>
 
               <div className="mb-4">
-                <label className="form-label small fw-semibold">Password</label>
+                <label className="form-label small fw-semibold text-muted">Security Password</label>
                 <input
                   type="password"
-                  className="form-control form-control-lg"
+                  className="form-control form-control-lg bg-dark text-white border border-secondary"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -96,25 +108,20 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
+                className="btn btn-danger btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
                 disabled={loading}
               >
                 {loading ? (
                   <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 ) : (
-                  'Log In'
+                  'Authorize Console'
                 )}
               </button>
             </form>
 
-            <div className="text-center mt-4 d-flex flex-column gap-1">
-              <div>
-                <span className="text-muted small">Don't have an account? </span>
-                <Link to="/register" className="small fw-semibold text-decoration-none">Register here</Link>
-              </div>
-              <div>
-                <Link to="/admin/login" className="small fw-semibold text-decoration-none text-muted">Admin Portal Access</Link>
-              </div>
+            <div className="text-center mt-4">
+              <span className="text-muted small">Standard User? </span>
+              <Link to="/login" className="small fw-semibold text-decoration-none text-danger">Go to Buyer Login</Link>
             </div>
           </div>
         </div>
@@ -123,4 +130,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;

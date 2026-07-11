@@ -6,6 +6,7 @@ import MainLayout from '../layouts/MainLayout';
 
 import Landing from '../pages/Landing';
 import Login from '../pages/Login';
+import AdminLogin from '../pages/AdminLogin';
 import Register from '../pages/Register';
 import Dashboard from '../pages/Dashboard';
 import VehicleDetails from '../pages/VehicleDetails';
@@ -19,6 +20,7 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/register" element={<Register />} />
 
       <Route element={<MainLayout />}>
