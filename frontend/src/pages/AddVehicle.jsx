@@ -1,0 +1,165 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { vehicleService } from '../services/vehicleService';
+import ErrorMessage from '../components/ErrorMessage';
+import ToastNotification from '../components/ToastNotification';
+import { CATEGORIES } from '../constants';
+import { ChevronLeft } from 'lucide-react';
+
+const AddVehicle = () => {
+  const navigate = useNavigate();
+  const [make, setMake] = useState('');
+  const [model, setModel] = useState('');
+  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [price, setPrice] = useState('');
+  const [quantity, setQuantity] = useState('');
+  
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [toastMessage, setToastMessage] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!make || !model || !category || !price || !quantity) {
+      setError('All fields are required');
+      return;
+    }
+
+    if (Number(price) <= 0) {
+      setError('Price must be greater than zero');
+      return;
+    }
+
+    if (Number(quantity) < 0) {
+      setError('Quantity cannot be negative');
+      return;
+    }
+
+    setSaving(true);
+    setError('');
+
+    try {
+      const payload = {
+        make,
+        model,
+        category,
+        price: Number(price),
+        quantity: Number(quantity)
+      };
+
+      const data = await vehicleService.add(payload);
+      if (data && data.success) {
+        setToastMessage('Vehicle listing created successfully!');
+        setTimeout(() => {
+          navigate('/admin');
+        }, 1200);
+      } else {
+        setError(data.message || 'Failed to create vehicle');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error occurred while saving');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="container py-3">
+      {toastMessage && (
+        <ToastNotification message={toastMessage} type="success" onClose={() => setToastMessage('')} />
+      )}
+
+      <button className="btn btn-link text-decoration-none text-secondary d-flex align-items-center gap-1 mb-4 p-0" onClick={() => navigate('/admin')}>
+        <ChevronLeft size={20} /> Back to Panel
+      </button>
+
+      <div className="row justify-content-center">
+        <div className="col-md-7 col-lg-6">
+          <div className="card shadow-sm border-0 p-4">
+            <div className="card-body">
+              <h4 className="fw-bold text-dark mb-4">Add New Vehicle</h4>
+              
+              <ErrorMessage message={error} />
+
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label text-secondary small fw-semibold">Make</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. Ford"
+                    value={make}
+                    onChange={(e) => setMake(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label text-secondary small fw-semibold">Model</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. Explorer"
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label text-secondary small fw-semibold">Category</label>
+                  <select
+                    className="form-select"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    required
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option value={cat} key={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label text-secondary small fw-semibold">Price ($)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="form-control"
+                    placeholder="35000"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="form-label text-secondary small fw-semibold">Initial Stock Quantity</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="5"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="d-flex gap-2">
+                  <button type="button" className="btn btn-outline-secondary w-100 py-2.5" onClick={() => navigate('/admin')}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn btn-primary w-100 py-2.5" disabled={saving}>
+                    {saving ? 'Creating...' : 'Create Listing'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AddVehicle;
